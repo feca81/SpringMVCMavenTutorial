@@ -54,9 +54,10 @@ public class RentController {
 	
 	@RequestMapping(value = "rentabook", method = RequestMethod.POST)
 	public String rentABook(RentedBooksByMember rentedBooksByMember, BindingResult result, ModelMap model) {
-		if (rentedBooksByMember.getMember().getId() != 0){
+	    String value = "";
+	    if (rentedBooksByMember.getMember().getId() != 0){
 			boolean isRentable = true;
-			int index = -1;
+			int index = -1;			
 			List<Book> rentedBooks = rentService.getRentedBooksByMember(rentedBooksByMember.getMember()).getRentedBookList();
 			
 			for (Book book : rentedBooksByMember.getRentedBookList()){
@@ -68,17 +69,19 @@ public class RentController {
 			}
 			if (isRentable){
 				rentService.rentBook(rentedBooksByMember);
-	    		return "redirect:home";
+	    		value = "redirect:home";
 			} else {
 				setRentABookModel(rentedBooksByMember, model);
 				result.rejectValue("rentedBookList["+index+"].id","rentedBookList.notvalid", "Már ki lett kölcsönözve ez a könyv!");
-				return "rentabook";
+				value = "rentabook";
 			}
     	} else {
     		setRentABookModel(rentedBooksByMember, model);
 			result.rejectValue("member.id","member.notvalid", "Kötelező Tagot választani!");
-			return "rentabook";
+			value = "rentabook";
     	}
+		
+		return value;
 	}
 	
 	private void setRentABookModel(RentedBooksByMember rentedBooksByMember, ModelMap model) {
@@ -113,13 +116,13 @@ public class RentController {
 	public String takingBackBook(RentedBooksByMember rentedBooksByMember, ModelMap model) {
 		rentedBooksByMember.setMember(memberService.getMember(rentedBooksByMember.getMember().getId()));
 		rentService.takingBackBooksFromMember(rentedBooksByMember);
+		
 		return "redirect:home";
 	}
 	
 	@RequestMapping(value = "rentedbooklist", method = RequestMethod.GET)
 	public String rentedBook(ModelMap model) {
-		model.addAttribute("rentedBooksByMemberList", rentService.getRentedBooksByMemberList());				
-		
+		model.addAttribute("rentedBooksByMemberList", rentService.getRentedBooksByMemberList());						
 		
 		return "rentedbook"; 
 	}

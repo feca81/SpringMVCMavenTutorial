@@ -45,12 +45,15 @@ public class MemberController {
     
     @RequestMapping(value = "savemember", method = RequestMethod.POST)
 	public String saveMember(Member member, BindingResult result, ModelMap model) {
-    	if (result.hasErrors()){
-    		return "memberregistration";
+    	String value = "";
+        if (result.hasErrors()){
+    		value = "memberregistration";
     	} else {
     		memberService.saveMember(member);
-			return "redirect:home";
+			value = "redirect:home";
     	}
+        
+        return value;
 	}
     
     @RequestMapping(value = "deletemember", method = RequestMethod.GET)
@@ -83,13 +86,15 @@ public class MemberController {
 	public String editSelectedMember(Member member, ModelMap model) {
 		member = memberService.getMember(member.getId());
     	model.addAttribute("member", member);
+    	
 		return "editmember";
  
 	}    
     
     @RequestMapping(value = "editmember", method = RequestMethod.POST)
 	public String editMember(Member member, BindingResult result, ModelMap model) {
-    	memberService.saveMember(member); 
+    	memberService.saveMember(member);
+    	
     	return "redirect:home";
 	}
     

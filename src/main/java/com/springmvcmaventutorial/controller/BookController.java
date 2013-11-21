@@ -33,12 +33,15 @@ public class BookController {
     
     @RequestMapping(value = "savebook", method = RequestMethod.POST)
 	public String saveBook(Book book, BindingResult result, ModelMap model) {
-    	if (result.hasErrors()){
-    		return "bookregistration";
+    	String value = "";
+        if (result.hasErrors()){
+    		value = "bookregistration";
     	} else {
     		bookService.saveBook(book);
-			return "redirect:home";
+			value = "redirect:home";
     	}
+    	
+    	return value;
 	}
     
     @RequestMapping(value = "deletebook", method = RequestMethod.GET)
